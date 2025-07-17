@@ -9,7 +9,7 @@ Usage: $0 -i <input-file> -w <wordlist> [options]
 Options:
   -i <input-file>       File containing list of domains or URLs (required)
   -w <wordlist>         Wordlist file for gobuster (required)
-  -d <output-directory> Directory to save logs (default: output)
+  -o <output-directory> Directory to save logs (default: output)
   -t <threads>          Number of threads (default: 10)
   -h                    Show this help message
 

@@ -21,7 +21,15 @@ All of those formats will result a retrieval of example.com
 Command:
 ```
 gobuster -i hosts_file.txt -w wordlist.txt -o output_directory -t 5
+gobuster -i hosts_file.txt -w wordlist.txt
 ```
+
+Options:
+  -i <input-file>       File containing list of domains or URLs (required)
+  -w <wordlist>         Wordlist file for gobuster (required)
+  -o <output-directory> Directory to save logs (default: output)
+  -t <threads>          Number of threads (default: 10)
+  -h                    Show this help message
 
 ## Supports
 - Custom thread number

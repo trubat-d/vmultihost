@@ -5,6 +5,12 @@ run a wordlist on a arbitrarily long list of hosts
 ## Prerequisit
 - gobuster
 - grep
+- vmultihost script in Releases
+
+Run on script
+```
+chmod +x vmultihost
+```
 
 ## Usage
 
@@ -20,8 +26,8 @@ All of those formats will result a retrieval of example.com
 
 Command:
 ```
-gobuster -i hosts_file.txt -w wordlist.txt -o output_directory -t 5
-gobuster -i hosts_file.txt -w wordlist.txt
+./vmultihost -i hosts_file.txt -w wordlist.txt -o output_directory -t 5
+./vmultihost -i hosts_file.txt -w wordlist.txt
 ```
 
 ## Options:

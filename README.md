@@ -24,7 +24,7 @@ gobuster -i hosts_file.txt -w wordlist.txt -o output_directory -t 5
 gobuster -i hosts_file.txt -w wordlist.txt
 ```
 
-# Options:
+## Options:
 ```
 -i <input-file>       File containing list of domains or URLs (required)
 -w <wordlist>         Wordlist file for gobuster (required)

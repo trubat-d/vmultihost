@@ -1,0 +1,108 @@
+#!/bin/bash
+
+echo "Gobuster Wrapper for multiple host enumeration"
+
+show_options(){
+	cat<<EOF
+Usage: $0 -i <input-file> -w <wordlist> [options]
+
+Options:
+  -i <input-file>       File containing list of domains or URLs (required)
+  -w <wordlist>         Wordlist file for gobuster (required)
+  -d <output-directory> Directory to save logs (default: output)
+  -t <threads>          Number of threads (default: 10)
+  -h                    Show this help message
+
+EOF
+
+	exit 1
+}
+
+
+if ! command -v gobuster >/dev/null 2>&1; then
+	echo "This tool uses gobuster, make sure to have it installed before running this tool"
+	exit 1
+fi
+
+if [ $# -eq 0 ]; then
+	show_options
+fi
+
+while getopts "hi:o:t:w:" opt; do
+	case $opt in
+	  h|\?)
+		  show_options
+	    ;;
+	  i)
+	    if [[ ! $OPTARG  =~ ^-.*$ ]]; then
+	    	input_file=$OPTARG
+	    	echo "Input file has been set to" $OPTARG
+	    else
+	    	show_options
+	    fi
+	    ;;
+	  o)
+	    output_dir=$OPTARG
+	    echo "Output directory set to" $OPTARG
+	    ;;
+	  t)
+	    if [[ $OPTARG =~ ^-?[0-9]+$ ]]; then    
+	    	threads=$OPTARG
+	    	echo "Threads was 10 and is now at" $OPTARG
+	    else
+		echo "Threads must be an integer"
+		exit 1
+	    fi
+	    ;;
+	  w)
+	    if [[ ! $OPTARG =~ ^-.*$ ]]; then
+	    	wordlist=$OPTARG
+		echo "Wordlist set to" $OPTARG
+	    else
+	    	show_options
+	    fi
+	    ;;
+	esac
+done
+
+if [ ! -f "$input_file" ]; then
+    echo "Input file does not exist: $input_file"
+    exit 1
+fi
+
+if [ -z $input_file ]; then
+	show_options
+fi
+
+if [ -z $wordlist ]; then
+	show_options
+fi
+
+if [ -z "$threads" ]; then
+	threads=10
+fi
+
+if [ -z $output_dir ]; then
+	output_dir="output"
+fi
+
+mkdir -p "$output_dir"
+
+echo "Starting Enum"
+
+while IFS= read -r input; do
+
+	[[ -z "$input" ]] && continue
+
+	if [[ ! "$input" =~ ^https?:// ]]; then
+        	input="https://$input"
+    	fi
+
+	if [[ $input =~ ^(https?:\/\/)?([^\/]+\.)*([a-zA-Z0-9-]+\.[a-zA-Z]{2,})(\/|$) ]]; then
+		echo -e "Starting enumeration for ${BASH_REMATCH[3]}" 
+		gobuster vhost -u "https://${BASH_REMATCH[3]}" -t "$threads" -w "$wordlist" --append-domain --random-agent | grep -v "Status: 502" > "$output_dir/${BASH_REMATCH[3]}.log"
+		echo -e "\n"
+	fi
+done < $input_file
+
+echo "End of program"
